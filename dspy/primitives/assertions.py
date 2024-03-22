@@ -202,7 +202,7 @@ def backtrack_handler(func, bypass_suggest=True, max_backtracks=2):
     input field to the signature, which is the feedback.
     """
 
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         error_msg, result = None, None
         with dspy.settings.lock:
             dspy.settings.backtrack_to = None
@@ -239,7 +239,7 @@ def backtrack_handler(func, bypass_suggest=True, max_backtracks=2):
                 else:
                     try:
                         dsp.settings.trace.clear()
-                        result = func(*args, **kwargs)
+                        result = await func(*args, **kwargs)
                         break
                     except (DSPySuggestionError, DSPyAssertionError) as e:
                         if not current_error:

@@ -61,7 +61,7 @@ def _generate(template: Template, **kwargs) -> Callable:
 
     generator = dsp.settings.lm
 
-    def do_generate(
+    async def do_generate(
         example: Example, stage: str, max_depth: int = 2, original_example=None,
     ):
         if not dsp.settings.lm:
@@ -74,7 +74,7 @@ def _generate(template: Template, **kwargs) -> Callable:
 
         # Generate and extract the fields.
         prompt = template(example)
-        completions: list[dict[str, Any]] = generator(prompt, **kwargs)
+        completions: list[dict[str, Any]] = await generator(prompt, **kwargs)
         completions: list[Example] = [template.extract(example, p) for p in completions]
 
         # Find the completions that are most complete.

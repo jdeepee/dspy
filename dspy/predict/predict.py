@@ -45,10 +45,10 @@ class Predict(Parameter):
             *_, last_key = self.signature.fields.keys()
             self.signature = self.signature.with_updated_fields(last_key, prefix=prefix)
 
-    def __call__(self, **kwargs):
-        return self.forward(**kwargs)
+    async def __call__(self, **kwargs):
+        return await self.forward(**kwargs)
 
-    def forward(self, **kwargs):
+    async def forward(self, **kwargs):
         # Extract the three privileged keyword arguments.
         new_signature = ensure_signature(kwargs.pop("new_signature", None))
         signature = ensure_signature(kwargs.pop("signature", self.signature))
@@ -88,12 +88,12 @@ class Predict(Parameter):
         template = signature_to_template(signature)
 
         if self.lm is None:
-            x, C = dsp.generate(template, **config)(x, stage=self.stage)
+            x, C = await dsp.generate(template, **config)(x, stage=self.stage)
         else:
             # Note: query_only=True means the instructions and examples are not included.
             # I'm not really sure why we'd want to do that, but it's there.
             with dsp.settings.context(lm=self.lm, query_only=True):
-                x, C = dsp.generate(template, **config)(x, stage=self.stage)
+                x, C = await dsp.generate(template, **config)(x, stage=self.stage)
 
         assert self.stage in x, "The generated (input, output) example was not stored"
 

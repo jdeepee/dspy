@@ -22,8 +22,8 @@ class Module(BaseModule, metaclass=ProgramMeta):
     def __init__(self):
         self._compiled = False
 
-    def __call__(self, *args, **kwargs):
-        return self.forward(*args, **kwargs)
+    async def __call__(self, *args, **kwargs):
+        return await self.forward(*args, **kwargs)
 
     def named_predictors(self):
         from dspy.predict.predict import Predict

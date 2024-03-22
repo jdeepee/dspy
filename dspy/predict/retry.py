@@ -43,7 +43,7 @@ class Retry(Predict):
         kwargs["new_signature"] = self.new_signature
         return self.original_forward(**kwargs)
     
-    def __call__(self, **kwargs):
+    async def __call__(self, **kwargs):
         cached_kwargs = copy.deepcopy(kwargs)
         kwargs["_trace"] = False
         kwargs.setdefault("demos", self.demos if self.demos is not None else [])
@@ -52,9 +52,9 @@ class Retry(Predict):
         if dspy.settings.backtrack_to == self:
             for key, value in dspy.settings.backtrack_to_args.items():
                 kwargs.setdefault(key, value)
-            pred = self.forward(**kwargs)
+            pred = await self.forward(**kwargs)
         else:
-            pred = self.module(**kwargs)
+            pred = await self.module(**kwargs)
 
         # now pop multiple reserved keys
         # NOTE(shangyin) past_outputs seems not useful to include in demos,
