@@ -117,7 +117,8 @@ def _generate(template: Template, **kwargs) -> Callable:
             }
 
             assert max_depth > 0
-            return generate(template, **new_kwargs)(
+            generated_fn = generate(template, **new_kwargs)
+            return await generated_fn(
                 completion,
                 stage=stage,
                 max_depth=max_depth - 1,
